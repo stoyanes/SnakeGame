@@ -26,6 +26,9 @@ class Snake(pygame.sprite.Sprite):
     
     def grow(self):
         self.length = self.length + 1
+    
+    def dead(self):
+        self.is_alife = False
 
     def change_direction(self, direction):
         if self.curr_direction == RIGHT and self.new_direction == LEFT:
@@ -92,23 +95,23 @@ class Snake(pygame.sprite.Sprite):
         pass
 
 class Piece(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, color, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((11, 11))
         self.rect = self.image.get_rect()
-        self.rect = pygame.draw.rect(self.image, (25, 200, 25),self.rect)
+        self.rect = pygame.draw.rect(self.image, color,self.rect)
         self.rect.left = x
         self.rect.top = y
 
 class Food(Piece):
-    def __init__(self):
-        Piece.__init__(self, random.randint(0,30)*20, random.randint(0,20)*20 )
+    def __init__(self, color):
+        Piece.__init__(self,color, random.randint(0,30)*20, random.randint(0,20)*20 )
     def update(self):
         pass
 
 class Obstancle(Piece):
-    def __init__(self):
-        Piece.__init__(self, random.randint(0,30)*20, random.randint(0,20)*20)
+    def __init__(self, color):
+        Piece.__init__(self, color, random.randint(0,30)*20, random.randint(0,20)*20)
 
     def update(self):
         pass
@@ -124,13 +127,11 @@ class Game(object):
         pygame.display.flip()
         
         snake = Snake()
-        food = Food()
-        #print(food.rect.left)
-        #print(food.rect.left)
-        obstancle = Obstancle()
-        allsprites = pygame.sprite.RenderPlain((snake, food))
+        food = Food((255, 255, 0))
+        obstancles = [Obstancle((255, 0, 0))]
+        allsprites = pygame.sprite.RenderPlain((snake, food, obstancles[0]))
         while True:
-            pygame.time.delay(100)
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
@@ -149,8 +150,13 @@ class Game(object):
             
             if snake.rect.collidepoint(food.rect.left, food.rect.top):
                 score += 17
-                food.__init__()
+                food.__init__((255, 255, 0))
                 snake.grow()
+                obstancles.insert(0, Obstancle((255, 0, 0)))
+                
+            for obstancle in obstancles:
+                if (snake.rect.collidepoint(obstancle.rect.left, obstancle.rect.top)):
+                    snake.dead()
 
             screen.blit(background, (0, 0))
             
@@ -158,18 +164,18 @@ class Game(object):
                 print(score)
                 return
             else:
-                # Draw the fruit and stuff
                 allsprites.update()
                 allsprites.draw(screen)
 
-                # Draw each bit of the snake
                 for segment in snake.snake_container:
                     screen.blit(snake.image, segment)
+                    
+                for obstancle in obstancles:
+                    screen.blit(obstancle.image, obstancle)
 
-                # Show the complete, updated frame
                 pygame.display.flip()
                 
-
+            pygame.time.delay(100)
 
 if __name__ == '__main__':
     pygame.init()
