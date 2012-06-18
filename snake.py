@@ -10,17 +10,16 @@ UP = 4
 class Snake(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((15, 15))
+        self.image = pygame.Surface((7, 7))
         self.image = self.image.convert()
         self.rect = self.image.get_rect()
         self.rect = pygame.draw.rect(self.image, (0, 255, 255), self.rect)
         
         self.curr_direction = RIGHT
         self.new_direction = RIGHT
-        #self.old_direction = -1
-        self.snake_container = [(0, 0)];
-        self.coord_x = 0
-        self.coord_y = 0
+        self.snake_container = [(20, 20)];
+        self.coord_x = 20
+        self.coord_y = 20
         self.is_alife = True
         self.length = 1
     
@@ -31,13 +30,13 @@ class Snake(pygame.sprite.Sprite):
         self.is_alife = False
 
     def change_direction(self, direction):
-        if self.curr_direction == RIGHT and self.new_direction == LEFT:
+        if self.curr_direction == RIGHT and direction == LEFT:
             return
-        elif self.curr_direction == LEFT and self.new_direction == RIGHT:
+        elif self.curr_direction == LEFT and direction == RIGHT:
             return
-        elif self.curr_direction == DOWN and self.new_direction == UP:
+        elif self.curr_direction == DOWN and direction == UP:
             return
-        elif self.curr_direction == UP and self.new_direction == DOWN:
+        elif self.curr_direction == UP and direction == DOWN:
             return
         else:
             self.new_direction = direction
@@ -75,11 +74,11 @@ class Snake(pygame.sprite.Sprite):
                 self.is_alife = False
                 return
 
-        #for segment in self.snake_container[:]:
-            #if (segment[0] == self.rect.left) and (segment[1] == self.rect.top):
-                #touched self (segment), omg died!
-                #self.is_alife = False
-                #return
+        for segment in self.snake_container[:]:
+            if (segment[0] == self.rect.left) and (segment[1] == self.rect.top):
+            #if self.rect.collidepoint(segment[0], segment[1]):
+                self.is_alife = False
+                return
 
         self.snake_container.insert(0, (self.rect.left, self.rect.top))
         self.snake_container = self.snake_container[0:self.length-1]	
