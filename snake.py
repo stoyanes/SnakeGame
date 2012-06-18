@@ -10,17 +10,17 @@ UP = 4
 class Snake(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((25, 25))
+        self.image = pygame.Surface((15, 15))
         self.image = self.image.convert()
         self.rect = self.image.get_rect()
-        self.rect = pygame.draw.rect(self.image, (255, 255, 255), self.rect)
+        self.rect = pygame.draw.rect(self.image, (0, 255, 255), self.rect)
         
         self.curr_direction = RIGHT
         self.new_direction = RIGHT
         #self.old_direction = -1
-        self.snake_container = [(random.randint(0,30)*20, random.randint(0,20)*20)];
-        self.coord_x = random.randint(0,30)*20
-        self.coord_y = random.randint(0,20)*20
+        self.snake_container = [(0, 0)];
+        self.coord_x = 0
+        self.coord_y = 0
         self.is_alife = True
         self.length = 1
     
@@ -94,7 +94,7 @@ class Snake(pygame.sprite.Sprite):
 class Piece(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((19, 21))
+        self.image = pygame.Surface((11, 11))
         self.rect = self.image.get_rect()
         self.rect = pygame.draw.rect(self.image, (25, 200, 25),self.rect)
         self.rect.left = x
@@ -109,6 +109,9 @@ class Food(Piece):
 class Obstancle(Piece):
     def __init__(self):
         Piece.__init__(self, random.randint(0,30)*20, random.randint(0,20)*20)
+
+    def update(self):
+        pass
         
 class Game(object):
     def run(self, screen):
@@ -122,9 +125,9 @@ class Game(object):
         
         snake = Snake()
         food = Food()
-        print(food.rect.left)
-        print(food.rect.left)
-        #obstancle = Obstancle()
+        #print(food.rect.left)
+        #print(food.rect.left)
+        obstancle = Obstancle()
         allsprites = pygame.sprite.RenderPlain((snake, food))
         while True:
             pygame.time.delay(100)
@@ -143,18 +146,16 @@ class Game(object):
                     if event.key == K_UP:
                         snake.change_direction(UP)
             snake.move()
-            print(food.rect.left, food.rect.top)
-            print(snake.rect.left, snake.rect.top)
-            print()
-            print()
-            if (snake.rect.top == food.rect.top) and (snake.rect.left == food.rect.left):
+            
+            if snake.rect.collidepoint(food.rect.left, food.rect.top):
                 score += 17
                 food.__init__()
                 snake.grow()
 
             screen.blit(background, (0, 0))
             
-            if snake.is_alife == False:	
+            if snake.is_alife == False:
+                print(score)
                 return
             else:
                 # Draw the fruit and stuff
