@@ -105,14 +105,14 @@ class Piece(pygame.sprite.Sprite):
 
 class Food(Piece):
     def __init__(self, color):
-        Piece.__init__(self, color, random.randint(0,20)*30, random.randint(0,20)*20)
+        Piece.__init__(self, color, random.randint(0,32)*20, random.randint(0,24)*20)
         
     def update(self):
         pass
 
 class Obstancle(Piece):
     def __init__(self, color):
-        Piece.__init__(self, color, random.randint(0,33) * 20, random.randint(0,28) * 20)
+        Piece.__init__(self, color, random.randint(0,32)*20, random.randint(0,24)*20)
 
     def update(self):
         pass
@@ -136,16 +136,40 @@ class Game(object):
         return self.score
         
     def welcome_mess(self, screen):
-        font = pygame.font.Font(None, 40)
-        text = font.render("Hello, this is Snake game", 1, (255, 255, 255))
-        textpos = text.get_rect(centerx = (screen.get_width()/2), centery = screen.get_height()/2 - 100)
+        font = pygame.font.Font(None, 60)
+        text = font.render("HUNGRY SNAKE", 1, (0, 255, 255))
+        textpos = text.get_rect(centerx = (screen.get_width()/2), centery = screen.get_height()/2 - 200)
         screen.blit(text, textpos)
         
-        text = font.render("Some message goes here.", 1, (255, 255, 255))
+        font = pygame.font.Font(None, 30)
+        text = font.render("Try to reach ", 1, (255, 255, 255))
         textpos = text.get_rect(centerx = screen.get_width()/2 - 100, centery = (screen.get_height()/2 - 30))
         screen.blit(text, textpos)
         
-        #food = Piece((255, 255, 255), screen.get_width()/3, screen.get_height()/3)
+        text = font.render("green rectangles", 1, (0, 255, 0))
+        textpos = text.get_rect(centerx = screen.get_width()/2 + 45, centery = (screen.get_height()/2 - 30))
+        screen.blit(text, textpos)
+        
+        text = font.render("Escape ", 1, (255, 255, 255))
+        textpos = text.get_rect(centerx = screen.get_width()/2 - 122, centery = (screen.get_height()/2))
+        screen.blit(text, textpos)
+        
+        text = font.render("red rectangles", 1, (255, 0, 0))
+        textpos = text.get_rect(centerx = screen.get_width()/2 - 10, centery = (screen.get_height()/2))
+        screen.blit(text, textpos)
+ 
+        
+    def get_ready(self, screen):
+        font = pygame.font.Font(None, 60)
+        text = font.render("GET READY!", 1, (0, 255, 255))
+        textpos = text.get_rect(centerx = (screen.get_width()/2), centery = screen.get_height()/2)
+        screen.blit(text, textpos)
+        
+    def go(self, screen):
+        font = pygame.font.Font(None, 60)
+        text = font.render("GO!", 1, (0, 255, 255))
+        textpos = text.get_rect(centerx = (screen.get_width()/2), centery = screen.get_height()/2)
+        screen.blit(text, textpos)
         
     def add_obstancles(self, ratio):
         for index in range(0, ratio * 5 + 17):
@@ -166,16 +190,31 @@ class Game(object):
         background.fill((0, 0, 0))
         screen.blit(background, (0, 15))
         pygame.display.flip()
-
         self.welcome_mess(screen)
 
         pygame.display.flip()
+        pygame.time.delay(10000)
+        background.fill((0, 0, 0))
+        screen.blit(background, (0, 15))
+        pygame.display.flip()
+        self.get_ready(screen)
+        pygame.display.flip()
+        pygame.time.delay(3000)
+        
+        background.fill((0, 0, 0))
+        screen.blit(background, (0, 15))
+        pygame.display.flip()
+        self.go(screen)
+        pygame.display.flip()
+        pygame.time.delay(1000)
         
         snake = Snake()
-        #food = Food((0, 255, 0))
-        #obstancles = [Obstancle((255, 0, 0))]
         allsprites = pygame.sprite.RenderPlain((snake, self.food))
-        pygame.time.delay(1000)
+        #pygame.time.delay(10000)
+        pygame.event.clear()
+        
+        #self.get_ready(screen)
+        #pygame.time.delay(1000)
         pygame.event.clear()
         while True:
             
@@ -198,9 +237,9 @@ class Game(object):
             
             if snake.rect.collidepoint(self.food.rect.left, self.food.rect.top):
                 self.increase_score()
+                self.increase_level()
                 self.food.__init__((0, 255, 0))
                 snake.grow()
-                self.increase_level()
                 #obstancles.insert(0, Obstancle((255, 0, 0)))
                 
             for obstancle in self.obstancles:
