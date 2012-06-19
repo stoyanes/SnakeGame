@@ -7,6 +7,8 @@ LEFT = 2
 DOWN = 3
 UP = 4
 
+LEVELS_TABLE = [20, 40, 60, 80, 100, 120, 140, 160, 180, 200] 
+
 class Snake(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -120,6 +122,18 @@ class Game(object):
     def __init__(self):
         self.score = 0
         self.speed = 100
+        self.obstancles = []
+        self.food = Food((0, 255, 0))
+        self.level = 0
+    
+    def get_obstancles(self):
+        return self.obstancles
+
+    def increase_score(self):
+        self.score += 5
+        
+    def get_score(self):
+        return self.score
         
     def welcome_mess(self, screen):
         font = pygame.font.Font(None, 40)
@@ -127,12 +141,22 @@ class Game(object):
         textpos = text.get_rect(centerx = (screen.get_width()/2), centery = screen.get_height()/2 - 100)
         screen.blit(text, textpos)
         
-        text = font.render("Note, that:", 1, (255, 255, 255))
+        text = font.render("Some message goes here.", 1, (255, 255, 255))
         textpos = text.get_rect(centerx = screen.get_width()/2 - 100, centery = (screen.get_height()/2 - 30))
         screen.blit(text, textpos)
         
         #food = Piece((255, 255, 255), screen.get_width()/3, screen.get_height()/3)
         
+    def add_obstancles(self, ratio):
+        for index in range(0, ratio * 5 + 17):
+            self.obstancles.insert(0, Obstancle((255, 0, 0)))
+            
+    def increase_level(self):
+        index = 0
+        for level in LEVELS_TABLE:
+            index += 1
+            if level == self.score:
+                self.add_obstancles(index)
     
     def run(self, screen):
         
@@ -148,10 +172,10 @@ class Game(object):
         pygame.display.flip()
         
         snake = Snake()
-        food = Food((0, 255, 0))
-        obstancles = [Obstancle((255, 0, 0))]
-        allsprites = pygame.sprite.RenderPlain((snake, food, obstancles[0]))
-        pygame.time.delay(10000)
+        #food = Food((0, 255, 0))
+        #obstancles = [Obstancle((255, 0, 0))]
+        allsprites = pygame.sprite.RenderPlain((snake, self.food))
+        pygame.time.delay(1000)
         pygame.event.clear()
         while True:
             
@@ -159,6 +183,7 @@ class Game(object):
                 if event.type == pygame.QUIT:
                     return
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                        #pygame.time.delay(1000000000)
                         return
                 if event.type == KEYDOWN:
                     if event.key == K_RIGHT:
@@ -171,13 +196,14 @@ class Game(object):
                         snake.change_direction(UP)
             snake.move()
             
-            if snake.rect.collidepoint(food.rect.left, food.rect.top):
-                self.score += 17
-                food.__init__((0, 255, 0))
+            if snake.rect.collidepoint(self.food.rect.left, self.food.rect.top):
+                self.increase_score()
+                self.food.__init__((0, 255, 0))
                 snake.grow()
-                obstancles.insert(0, Obstancle((255, 0, 0)))
+                self.increase_level()
+                #obstancles.insert(0, Obstancle((255, 0, 0)))
                 
-            for obstancle in obstancles:
+            for obstancle in self.obstancles:
                 if (snake.rect.collidepoint(obstancle.rect.left, obstancle.rect.top)):
                     snake.dead()
 
@@ -192,7 +218,7 @@ class Game(object):
                 for segment in snake.snake_container:
                     screen.blit(snake.image, segment)
                     
-                for obstancle in obstancles:
+                for obstancle in self.obstancles:
                     screen.blit(obstancle.image, obstancle)
 
                 pygame.display.flip()
