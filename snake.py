@@ -45,8 +45,8 @@ class Snake(pygame.sprite.Sprite):
         if self.new_direction == 1:
             self.curr_direction = 1
             self.coord_x += 10
-            if self.coord_x > 630:
-                self.coord_x = 630
+            if self.coord_x >= 640:
+                self.coord_x = 640
                 self.is_alife = False
                 return
 
@@ -61,8 +61,8 @@ class Snake(pygame.sprite.Sprite):
         elif self.new_direction == 3: # down
             self.curr_direction = 3
             self.coord_y += 10
-            if self.coord_y > 470:
-                self.coord_y = 470
+            if self.coord_y >= 480:
+                self.coord_y = 480
                 self.is_alife = False
                 return
 
@@ -86,7 +86,6 @@ class Snake(pygame.sprite.Sprite):
         if self.length < 3: # 3 is the minimum length of snake
             self.length += 1
 
-        # Update the rect for drawing later
         self.rect.left = self.coord_x
         self.rect.top = self.coord_y
 
@@ -98,37 +97,62 @@ class Piece(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((11, 11))
         self.rect = self.image.get_rect()
-        self.rect = pygame.draw.rect(self.image, color,self.rect)
+        self.rect = pygame.draw.rect(self.image, color, self.rect)
         self.rect.left = x
         self.rect.top = y
 
 class Food(Piece):
     def __init__(self, color):
-        Piece.__init__(self,color, random.randint(0,30)*20, random.randint(0,20)*20 )
+        Piece.__init__(self, color, random.randint(0,20)*30, random.randint(0,20)*20)
+        
     def update(self):
         pass
 
 class Obstancle(Piece):
     def __init__(self, color):
-        Piece.__init__(self, color, random.randint(0,30)*20, random.randint(0,20)*20)
+        Piece.__init__(self, color, random.randint(0,33) * 20, random.randint(0,28) * 20)
 
     def update(self):
         pass
-        
+  
 class Game(object):
+
+    def __init__(self):
+        self.score = 0
+        self.speed = 100
+        
+    def welcome_mess(self, screen):
+        font = pygame.font.Font(None, 40)
+        text = font.render("Hello, this is Snake game", 1, (255, 255, 255))
+        textpos = text.get_rect(centerx = (screen.get_width()/2), centery = screen.get_height()/2 - 100)
+        screen.blit(text, textpos)
+        
+        text = font.render("Note, that:", 1, (255, 255, 255))
+        textpos = text.get_rect(centerx = screen.get_width()/2 - 100, centery = (screen.get_height()/2 - 30))
+        screen.blit(text, textpos)
+        
+        #food = Piece((255, 255, 255), screen.get_width()/3, screen.get_height()/3)
+        
+    
     def run(self, screen):
-        score = 0
+        
         pygame.display.set_caption('SnakeGame')
         background = pygame.Surface(screen.get_size())
         background = background.convert()
         background.fill((0, 0, 0))
         screen.blit(background, (0, 15))
         pygame.display.flip()
+
+        self.welcome_mess(screen)
+
+        pygame.display.flip()
         
         snake = Snake()
-        food = Food((255, 255, 0))
+        food = Food((0, 255, 0))
         obstancles = [Obstancle((255, 0, 0))]
         allsprites = pygame.sprite.RenderPlain((snake, food, obstancles[0]))
+        pygame.time.delay(10000)
+        pygame.event.clear()
         while True:
             
             for event in pygame.event.get():
@@ -148,8 +172,8 @@ class Game(object):
             snake.move()
             
             if snake.rect.collidepoint(food.rect.left, food.rect.top):
-                score += 17
-                food.__init__((255, 255, 0))
+                self.score += 17
+                food.__init__((0, 255, 0))
                 snake.grow()
                 obstancles.insert(0, Obstancle((255, 0, 0)))
                 
@@ -160,7 +184,6 @@ class Game(object):
             screen.blit(background, (0, 0))
             
             if snake.is_alife == False:
-                print(score)
                 return
             else:
                 allsprites.update()
@@ -174,7 +197,7 @@ class Game(object):
 
                 pygame.display.flip()
                 
-            pygame.time.delay(100)
+            pygame.time.delay(self.speed)
 
 if __name__ == '__main__':
     pygame.init()
