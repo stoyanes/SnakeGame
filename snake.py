@@ -97,15 +97,33 @@ class Snake(pygame.sprite.Sprite):
 class Piece(pygame.sprite.Sprite):
     def __init__(self, color, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((11, 11))
+        self.image = pygame.Surface((9, 9))
         self.rect = self.image.get_rect()
         self.rect = pygame.draw.rect(self.image, color, self.rect)
         self.rect.left = x
         self.rect.top = y
 
 class Food(Piece):
-    def __init__(self, color):
-        Piece.__init__(self, color, random.randint(0,32)*20, random.randint(0,24)*20)
+    def __init__(self, color, obstancles):
+        coord_x = random.randint(5,16) * 25
+        coord_y = random.randint(5,16) * 25
+        index = 0
+        if len(obstancles) != 0:
+            flag = False
+            index += 1
+            while True:
+                print('zaciklqm', index)
+                for obstancle in obstancles:
+                    if coord_x != obstancle.rect.left and coord_y != obstancle.rect.top:
+                        flag = True
+                        break
+                if flag == True:
+                    break
+                else:
+                    coord_x = random.randint(5,28)*20
+                    coord_y = random.randint(5,20)*20
+        
+        Piece.__init__(self, color, coord_x, coord_y)
         
     def update(self):
         pass
@@ -123,8 +141,9 @@ class Game(object):
         self.score = 0
         self.speed = 100
         self.obstancles = []
-        self.food = Food((0, 255, 0))
+        self.food = Food((0, 255, 0), self.obstancles)
         self.level = 0
+        self.levels_table = set([40, 80, 120, 160, 180, 200, 220])
     
     def get_obstancles(self):
         return self.obstancles
@@ -171,16 +190,10 @@ class Game(object):
         textpos = text.get_rect(centerx = (screen.get_width()/2), centery = screen.get_height()/2)
         screen.blit(text, textpos)
         
-    def add_obstancles(self, ratio):
-        for index in range(0, ratio * 5 + 17):
-            self.obstancles.insert(0, Obstancle((255, 0, 0)))
             
     def increase_level(self):
-        index = 0
-        for level in LEVELS_TABLE:
-            index += 1
-            if level == self.score:
-                self.add_obstancles(index)
+        if self.score in self.levels_table:
+            self.speed -= 10
     
     def run(self, screen):
         
@@ -188,21 +201,21 @@ class Game(object):
         background = pygame.Surface(screen.get_size())
         background = background.convert()
         background.fill((0, 0, 0))
-        screen.blit(background, (0, 15))
+        screen.blit(background, (0, 0))
         pygame.display.flip()
         self.welcome_mess(screen)
 
         pygame.display.flip()
         pygame.time.delay(10000)
         background.fill((0, 0, 0))
-        screen.blit(background, (0, 15))
+        screen.blit(background, (0, 0))
         pygame.display.flip()
         self.get_ready(screen)
         pygame.display.flip()
         pygame.time.delay(3000)
         
         background.fill((0, 0, 0))
-        screen.blit(background, (0, 15))
+        screen.blit(background, (0, 0))
         pygame.display.flip()
         self.go(screen)
         pygame.display.flip()
@@ -222,7 +235,6 @@ class Game(object):
                 if event.type == pygame.QUIT:
                     return
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                        #pygame.time.delay(1000000000)
                         return
                 if event.type == KEYDOWN:
                     if event.key == K_RIGHT:
@@ -237,10 +249,11 @@ class Game(object):
             
             if snake.rect.collidepoint(self.food.rect.left, self.food.rect.top):
                 self.increase_score()
+                self.obstancles.insert(0, Obstancle((255, 0, 0)))
                 self.increase_level()
-                self.food.__init__((0, 255, 0))
+                self.food.__init__((0, 255, 0), self.obstancles)
                 snake.grow()
-                #obstancles.insert(0, Obstancle((255, 0, 0)))
+                
                 
             for obstancle in self.obstancles:
                 if (snake.rect.collidepoint(obstancle.rect.left, obstancle.rect.top)):
