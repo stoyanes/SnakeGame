@@ -1,0 +1,12 @@
+SnakeGame
+
+An old school snake game.
+
+INSTALLATION
+
+There is no installer. Simply run snake.py
+Note: You will need the python and the pygame library.
+
+HOW TO PLAY
+
+arrows: move snake
