@@ -7,12 +7,10 @@ LEFT = 2
 DOWN = 3
 UP = 4
 
-LEVELS_TABLE = [20, 40, 60, 80, 100, 120, 140, 160, 180, 200] 
-
 class Snake(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((7, 7))
+        self.image = pygame.Surface((13, 13))
         self.image = self.image.convert()
         self.rect = self.image.get_rect()
         self.rect = pygame.draw.rect(self.image, (0, 255, 255), self.rect)
@@ -97,7 +95,7 @@ class Snake(pygame.sprite.Sprite):
 class Piece(pygame.sprite.Sprite):
     def __init__(self, color, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((9, 9))
+        self.image = pygame.Surface((10, 10))
         self.rect = self.image.get_rect()
         self.rect = pygame.draw.rect(self.image, color, self.rect)
         self.rect.left = x
@@ -199,6 +197,7 @@ class Game(object):
         
         pygame.display.set_caption('SnakeGame')
         background = pygame.Surface(screen.get_size())
+        print(screen.get_size())
         background = background.convert()
         background.fill((0, 0, 0))
         screen.blit(background, (0, 0))
@@ -223,11 +222,7 @@ class Game(object):
         
         snake = Snake()
         allsprites = pygame.sprite.RenderPlain((snake, self.food))
-        #pygame.time.delay(10000)
         pygame.event.clear()
-        
-        #self.get_ready(screen)
-        #pygame.time.delay(1000)
         pygame.event.clear()
         while True:
             
@@ -256,7 +251,7 @@ class Game(object):
                 
                 
             for obstancle in self.obstancles:
-                if (snake.rect.collidepoint(obstancle.rect.left, obstancle.rect.top)):
+                if (snake.rect.colliderect(obstancle.rect)):
                     snake.dead()
 
             screen.blit(background, (0, 0))
