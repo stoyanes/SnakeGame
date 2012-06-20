@@ -10,7 +10,7 @@ UP = 4
 class Snake(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((13, 13))
+        self.image = pygame.Surface((7, 9))
         self.image = self.image.convert()
         self.rect = self.image.get_rect()
         self.rect = pygame.draw.rect(self.image, (0, 255, 255), self.rect)
@@ -108,9 +108,7 @@ class Food(Piece):
         index = 0
         if len(obstancles) != 0:
             flag = False
-            index += 1
             while True:
-                print('zaciklqm', index)
                 for obstancle in obstancles:
                     if coord_x != obstancle.rect.left and coord_y != obstancle.rect.top:
                         flag = True
@@ -241,8 +239,8 @@ class Game(object):
                     if event.key == K_UP:
                         snake.change_direction(UP)
             snake.move()
-            
-            if snake.rect.collidepoint(self.food.rect.left, self.food.rect.top):
+            #(player.rect.left == yumfruit.rect.left) and (player.rect.top == yumfruit.rect.top):
+            if snake.rect.colliderect(self.food.rect):
                 self.increase_score()
                 self.obstancles.insert(0, Obstancle((255, 0, 0)))
                 self.increase_level()
