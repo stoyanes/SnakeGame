@@ -136,6 +136,7 @@ class Game(object):
         self.levels_table = set([40, 80, 120, 160, 180, 200, 220])
         self.level_up = pygame.mixer.Sound('sounds/level_up.wav')
         self.eat_sound = pygame.mixer.Sound('sounds/eat.wav')
+        self.game_over_sound = pygame.mixer.Sound('sounds/game_over.wav')
     
     def get_obstancles(self):
         return self.obstancles
@@ -156,6 +157,7 @@ class Game(object):
         image = pygame.image.load('images/game_over_mess.png')
         screen.blit(image,(0, 0))
         pygame.display.flip()
+        self.game_over_sound.play()
         pygame.time.delay(10000)
         
     def get_ready(self, screen):
@@ -233,7 +235,7 @@ class Game(object):
             screen.blit(background, (0, 0))
             
             if snake.is_alife == False:
-                self.game_over_mess(screen)          
+                self.game_over_mess(screen)                
                 return
             else:
                 allsprites.update()
