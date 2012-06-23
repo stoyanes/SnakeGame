@@ -1,4 +1,5 @@
 import pygame
+#import tmx
 import random
 from pygame.locals import *
 
@@ -134,6 +135,8 @@ class Game(object):
         self.food = Food((0, 255, 0), self.obstancles)
         self.level = 0
         self.levels_table = set([40, 80, 120, 160, 180, 200, 220])
+        self.level_up = pygame.mixer.Sound('level_up.wav')
+        self.eat_sound = pygame.mixer.Sound('eat.wav')
     
     def get_obstancles(self):
         return self.obstancles
@@ -145,21 +148,24 @@ class Game(object):
         return self.score
         
     def welcome_mess(self, screen):
-        image = pygame.image.load('snake_game_well_mess.png')
+        image = pygame.image.load('images/snake_game_well_mess.png')
         screen.blit(image,(0, 0))
  
         
     def get_ready(self, screen):
-        image = pygame.image.load('get_ready_mess.png')
+        image = pygame.image.load('images/get_ready_mess.png')
         screen.blit(image, (0, 0))
         
     def go(self, screen):
-        image = pygame.image.load('go_mess.png')
+        image = pygame.image.load('images/go_mess.png')
         screen.blit(image, (0, 0))
             
     def increase_level(self):
         if self.score in self.levels_table:
             self.speed -= 10
+            self.level_up.play()
+
+        
     
     def run(self, screen):
         
@@ -210,12 +216,13 @@ class Game(object):
                         snake.change_direction(UP)
             snake.move()
             if snake.rect.colliderect(self.food.rect):
+                self.eat_sound.play()
                 self.increase_score()
                 self.obstancles.insert(0, Obstancle(RED))
                 self.increase_level()
                 self.food.__init__(GREEN, self.obstancles)
                 snake.grow()
- 
+
             for obstancle in self.obstancles:
                 if (snake.rect.colliderect(obstancle.rect)):
                     snake.die()
