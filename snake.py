@@ -135,8 +135,8 @@ class Game(object):
         self.food = Food((0, 255, 0), self.obstancles)
         self.level = 0
         self.levels_table = set([40, 80, 120, 160, 180, 200, 220])
-        self.level_up = pygame.mixer.Sound('level_up.wav')
-        self.eat_sound = pygame.mixer.Sound('eat.wav')
+        self.level_up = pygame.mixer.Sound('sounds/level_up.wav')
+        self.eat_sound = pygame.mixer.Sound('sounds/eat.wav')
     
     def get_obstancles(self):
         return self.obstancles
