@@ -81,7 +81,7 @@ class Snake(pygame.sprite.Sprite):
                 self.is_alife = False
                 return
 
-        for segment in self.snake_container[:]:
+        for segment in self.snake_container:
             if (segment[0] == self.rect.left) and (segment[1] == self.rect.top):
                 self.is_alife = False
                 return
@@ -145,41 +145,17 @@ class Game(object):
         return self.score
         
     def welcome_mess(self, screen):
-        font = pygame.font.Font(None, 60)
-        text = font.render("HUNGRY SNAKE", 1, (0, 255, 255))
-        textpos = text.get_rect(centerx = (screen.get_width()/2), centery = screen.get_height()/2 - 200)
-        screen.blit(text, textpos)
-        
-        font = pygame.font.Font(None, 30)
-        text = font.render("Try to reach ", 1, (255, 255, 255))
-        textpos = text.get_rect(centerx = DISPLAY_SIZE[0]/2 - 100, centery = (DISPLAY_SIZE[1]/2 - 30))
-        screen.blit(text, textpos)
-        
-        text = font.render("green rectangles", 1, (0, 255, 0))
-        textpos = text.get_rect(centerx = screen.get_width()/2 + 45, centery = (screen.get_height()/2 - 30))
-        screen.blit(text, textpos)
-        
-        text = font.render("Escape ", 1, (255, 255, 255))
-        textpos = text.get_rect(centerx = screen.get_width()/2 - 122, centery = (screen.get_height()/2))
-        screen.blit(text, textpos)
-        
-        text = font.render("red rectangles", 1, (255, 0, 0))
-        textpos = text.get_rect(centerx = screen.get_width()/2 - 10, centery = (screen.get_height()/2))
-        screen.blit(text, textpos)
+        image = pygame.image.load('snake_game_well_mess.png')
+        screen.blit(image,(0, 0))
  
         
     def get_ready(self, screen):
-        font = pygame.font.Font(None, 60)
-        text = font.render("GET READY!", 1, (0, 255, 255))
-        textpos = text.get_rect(centerx = (screen.get_width()/2), centery = screen.get_height()/2)
-        screen.blit(text, textpos)
+        image = pygame.image.load('get_ready_mess.png')
+        screen.blit(image, (0, 0))
         
     def go(self, screen):
-        font = pygame.font.Font(None, 60)
-        text = font.render("GO!", 1, (0, 255, 255))
-        textpos = text.get_rect(centerx = (screen.get_width()/2), centery = screen.get_height()/2)
-        screen.blit(text, textpos)
-        
+        image = pygame.image.load('go_mess.png')
+        screen.blit(image, (0, 0))
             
     def increase_level(self):
         if self.score in self.levels_table:
