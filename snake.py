@@ -1,5 +1,4 @@
 import pygame
-#import tmx
 import random
 from pygame.locals import *
 
@@ -150,15 +149,26 @@ class Game(object):
     def welcome_mess(self, screen):
         image = pygame.image.load('images/snake_game_well_mess.png')
         screen.blit(image,(0, 0))
- 
+        pygame.display.flip()
+        pygame.time.delay(10000)
+        
+    def game_over_mess(self, screen):
+        image = pygame.image.load('images/game_over_mess.png')
+        screen.blit(image,(0, 0))
+        pygame.display.flip()
+        pygame.time.delay(10000)
         
     def get_ready(self, screen):
         image = pygame.image.load('images/get_ready_mess.png')
         screen.blit(image, (0, 0))
+        pygame.display.flip()
+        pygame.time.delay(3000)
         
     def go(self, screen):
         image = pygame.image.load('images/go_mess.png')
         screen.blit(image, (0, 0))
+        pygame.display.flip()
+        pygame.time.delay(1000)
             
     def increase_level(self):
         if self.score in self.levels_table:
@@ -178,26 +188,19 @@ class Game(object):
         pygame.display.flip()
         
         self.welcome_mess(screen)
-        pygame.display.flip()
-        
-        pygame.time.delay(10000)
-        
+       
         background.fill(BLACK)
         screen.blit(background, (0, 0))
         pygame.display.flip()
         
         self.get_ready(screen)
-        pygame.display.flip()
-        pygame.time.delay(3000)
-        
+
         background.fill(BLACK)
         screen.blit(background, (0, 0))
         pygame.display.flip()
         
         self.go(screen)
-        pygame.display.flip()
-        pygame.time.delay(1000)
-        
+
         snake = Snake()
         allsprites = pygame.sprite.RenderPlain((snake, self.food))
         pygame.event.clear()
@@ -230,6 +233,7 @@ class Game(object):
             screen.blit(background, (0, 0))
             
             if snake.is_alife == False:
+                self.game_over_mess(screen)          
                 return
             else:
                 allsprites.update()
