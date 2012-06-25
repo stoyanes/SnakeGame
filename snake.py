@@ -224,8 +224,11 @@ class Game(object):
 
         snake = Snake()
         allsprites = pygame.sprite.RenderPlain((snake, self.food))
+        start_time = 0
+        end_time = 0
+        game_clock = pygame.time.Clock();
         while True:
-            
+            end_time = pygame.time.get_ticks()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
@@ -247,8 +250,9 @@ class Game(object):
                 self.obstancles.insert(0, Obstancle(RED, 0))
                 self.increase_level()
                 self.food.__init__(GREEN, self.obstancles)
+                start_time = pygame.time.get_ticks()
                 snake.grow()
-
+            
             for obstancle in self.obstancles:
                 if (snake.rect.colliderect(obstancle.rect)):
                     snake.die()
@@ -268,7 +272,14 @@ class Game(object):
                 for obstancle in self.obstancles:
                     screen.blit(obstancle.image, obstancle)
 
-                pygame.display.flip()  
+                pygame.display.flip()
+            #print(game_clock.tick())
+            end_time = pygame.time.get_ticks()
+            print('start_time = ', start_time)
+            print('end_time = ', end_time)
+            if (end_time - start_time) / 1000 >= 10.0: 
+                self.food.__init__(GREEN, self.obstancles)
+                start_time = pygame.time.get_ticks()
             pygame.time.delay(self.speed)
 
 if __name__ == '__main__':
