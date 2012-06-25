@@ -16,11 +16,15 @@ CYAN = (0, 255, 255)
 
 REGULAR_START = 0
 RANDOM_START = 1
+QUIT_GAME = 2
+
+SNAKE_BODY = (7, 9)
+START_SPEED = 100
 
 class Snake(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((7, 9))
+        self.image = pygame.Surface(SNAKE_BODY)
         self.image = self.image.convert()
         self.rect = self.image.get_rect()
         self.rect = pygame.draw.rect(self.image, (0, 255, 255), self.rect)
@@ -119,20 +123,20 @@ class Food(Piece):
                 if flag == True:
                     break
                 else:
-                    coord_x = random.randint(0, DISPLAY_SIZE[0])
-                    coord_y = random.randint(0, DISPLAY_SIZE[1])
+                    coord_x = random.randint(0, DISPLAY_SIZE[0] - SNAKE_BODY[1])
+                    coord_y = random.randint(0, DISPLAY_SIZE[1] - SNAKE_BODY[1])
         
         Piece.__init__(self, color, coord_x, coord_y)
 
 class Obstancle(Piece):
-    def __init__(self, color):
-        Piece.__init__(self, color, random.randint(0,DISPLAY_SIZE[0]), random.randint(0,DISPLAY_SIZE[1]))
+    def __init__(self, color, obstan_position_ratio):
+        Piece.__init__(self, color, random.randint(0,DISPLAY_SIZE[0]), random.randint(0,DISPLAY_SIZE[1])+obstan_position_ratio)
 
 class Game(object):
 
     def __init__(self):
         self.score = 0
-        self.speed = 100
+        self.speed = START_SPEED
         self.obstancles = []
         self.food = Food((0, 255, 0), self.obstancles)
         self.level = 0
@@ -151,7 +155,7 @@ class Game(object):
         return self.score
         
     def welcome_mess(self, screen):
-        image = pygame.image.load('images/snake_game_well_mess.png')
+        image = pygame.image.load('images/well_mess.png')
         screen.blit(image,(0, 0))
         pygame.display.flip()
         
@@ -188,7 +192,15 @@ class Game(object):
                     return REGULAR_START
                 if event.type == KEYDOWN and event.key == K_r:
                     return RANDOM_START
-
+                if event.type == KEYDOWN and (event.key == K_q or event.key == K_ESCAPE):
+                    return QUIT_GAME
+    
+    def generate_random_level(self):
+        self.speed = random.randint(START_SPEED/2, START_SPEED)
+        number_of_obstancles = int ((DISPLAY_SIZE[0] * DISPLAY_SIZE[1]) * 0.00005)
+        for item in range(0, number_of_obstancles):
+            self.obstancles.insert(0, Obstancle(RED, 50))
+        
     def run(self, screen):
         
         pygame.display.set_caption('SnakeGame')
@@ -198,6 +210,10 @@ class Game(object):
         
         start_type = self.wait_to_start()
         
+        if start_type == QUIT_GAME:
+            return
+        if start_type == RANDOM_START:
+            self.generate_random_level()
         
         self.get_ready(screen)
 
@@ -206,6 +222,7 @@ class Game(object):
         snake = Snake()
         allsprites = pygame.sprite.RenderPlain((snake, self.food))
         while True:
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
@@ -224,7 +241,7 @@ class Game(object):
             if snake.rect.colliderect(self.food.rect):
                 self.eat_sound.play()
                 self.increase_score()
-                self.obstancles.insert(0, Obstancle(RED))
+                self.obstancles.insert(0, Obstancle(RED, 0))
                 self.increase_level()
                 self.food.__init__(GREEN, self.obstancles)
                 snake.grow()
@@ -248,8 +265,7 @@ class Game(object):
                 for obstancle in self.obstancles:
                     screen.blit(obstancle.image, obstancle)
 
-                pygame.display.flip()
-                
+                pygame.display.flip()  
             pygame.time.delay(self.speed)
 
 if __name__ == '__main__':
