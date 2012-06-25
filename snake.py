@@ -14,6 +14,9 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 CYAN = (0, 255, 255)
 
+REGULAR_START = 0
+RANDOM_START = 1
+
 class Snake(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -151,7 +154,6 @@ class Game(object):
         image = pygame.image.load('images/snake_game_well_mess.png')
         screen.blit(image,(0, 0))
         pygame.display.flip()
-        pygame.time.delay(10000)
         
     def game_over_mess(self, screen):
         image = pygame.image.load('images/game_over_mess.png')
@@ -179,36 +181,35 @@ class Game(object):
 
         
     
+    def wait_to_start(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == KEYDOWN and event.key == K_s:
+                    return REGULAR_START
+                if event.type == KEYDOWN and event.key == K_r:
+                    return RANDOM_START
+
     def run(self, screen):
         
         pygame.display.set_caption('SnakeGame')
         background = pygame.Surface(screen.get_size())
-
-        background = background.convert()
-        background.fill(BLACK)
-        screen.blit(background, (0, 0))
-        pygame.display.flip()
         
         self.welcome_mess(screen)
-       
-        background.fill(BLACK)
-        screen.blit(background, (0, 0))
-        pygame.display.flip()
+        
+        start_type = self.wait_to_start()
+        
         
         self.get_ready(screen)
 
-        background.fill(BLACK)
-        screen.blit(background, (0, 0))
-        pygame.display.flip()
-        
         self.go(screen)
 
         snake = Snake()
         allsprites = pygame.sprite.RenderPlain((snake, self.food))
-        pygame.event.clear()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    return
+                if event.type == KEYDOWN and event.key == K_ESCAPE:
                     return
                 if event.type == KEYDOWN:
                     if event.key == K_RIGHT:
