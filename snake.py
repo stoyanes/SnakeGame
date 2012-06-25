@@ -110,14 +110,15 @@ class Piece(pygame.sprite.Sprite):
 
 class Food(Piece):
     def __init__(self, color, obstancles):
-        coord_x = random.randint(0, DISPLAY_SIZE[0])
-        coord_y = random.randint(0, DISPLAY_SIZE[1])
+        coord_x = random.randint(0, DISPLAY_SIZE[0] - SNAKE_BODY[1])
+        coord_y = random.randint(0, DISPLAY_SIZE[1] - SNAKE_BODY[1])
         index = 0
         if len(obstancles) != 0:
             flag = False
             while True:
                 for obstancle in obstancles:
-                    if coord_x != obstancle.rect.left and coord_y != obstancle.rect.top:
+                    #if coord_x != obstancle.rect.left and coord_y != obstancle.rect.top:
+                    if not obstancle.rect.collidepoint(coord_x, coord_y):
                         flag = True
                         break
                 if flag == True:
@@ -130,7 +131,9 @@ class Food(Piece):
 
 class Obstancle(Piece):
     def __init__(self, color, obstan_position_ratio):
-        Piece.__init__(self, color, random.randint(0,DISPLAY_SIZE[0]), random.randint(0,DISPLAY_SIZE[1])+obstan_position_ratio)
+        coord_x = random.randint(0,DISPLAY_SIZE[0])
+        coord_y = random.randint(0,DISPLAY_SIZE[1]) + obstan_position_ratio
+        Piece.__init__(self, color, coord_x, coord_y)
 
 class Game(object):
 
@@ -170,13 +173,13 @@ class Game(object):
         image = pygame.image.load('images/get_ready_mess.png')
         screen.blit(image, (0, 0))
         pygame.display.flip()
-        pygame.time.delay(3000)
+        pygame.time.wait(3000)
         
     def go(self, screen):
         image = pygame.image.load('images/go_mess.png')
         screen.blit(image, (0, 0))
         pygame.display.flip()
-        pygame.time.delay(1000)
+        pygame.time.wait(1000)
             
     def increase_level(self):
         if self.score in self.levels_table:
