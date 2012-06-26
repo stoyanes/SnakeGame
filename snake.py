@@ -20,6 +20,7 @@ QUIT_GAME = 2
 
 SNAKE_REC = (7, 9)
 START_SPEED = 100
+TIME_DISAPPEAR = 10.0
 
 
 class Snake(pygame.sprite.Sprite):
@@ -171,6 +172,13 @@ class Game(object):
         screen.blit(image, (0, 0))
         pygame.display.flip()
         self.game_over_sound.play()
+        
+        #font = pygame.font.Font(None, 60)
+        font = pygame.font.SysFont('Stencil', 60)
+        text = font.render(str(self.score), 1, RED)
+        textpos = text.get_rect(centerx = 320, centery = 240)
+        screen.blit(text, textpos)
+        pygame.display.flip()
         pygame.time.wait(5000)
 
     def get_ready(self, screen):
@@ -275,7 +283,7 @@ class Game(object):
 
             end_time = pygame.time.get_ticks()
 
-            if (end_time - start_time) / 1000 >= 10.0:
+            if (end_time - start_time) / 1000 >= TIME_DISAPPEAR:
                 self.food.__init__(GREEN, self.obstancles)
                 start_time = pygame.time.get_ticks()
             pygame.time.delay(self.speed)
