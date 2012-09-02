@@ -1,3 +1,7 @@
+''' This file contains predefined system constants, such as directions to move the snake,
+colors, starting game mode.
+
+'''
 DISPLAY_SIZE = (640, 480)
 
 RIGHT = 1
