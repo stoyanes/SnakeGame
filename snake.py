@@ -10,12 +10,11 @@ class Snake(pygame.sprite.Sprite):
 
         self.curr_direction = RIGHT
         self.new_direction = RIGHT
-        self.snake_elements = [(20, 20)]
-        self.coord_x = 20
-        self.coord_y = 20
+        self.snake_elements = [(1, 1)]
+        self.coord_x = 1
+        self.coord_y = 1
         self.is_alife = True
         self.length = 3
-        self.eat_sound = pygame.mixer.Sound('sounds/eat.wav')
 
     def born(self):
         self.image = pygame.Surface(SNAKE_REC)
@@ -25,12 +24,19 @@ class Snake(pygame.sprite.Sprite):
 
     def grow(self):
         self.length = self.length + 1
-        self.eat_sound.play()
+
+    def get_length(self):
+        return self.length
 
     def die(self):
         self.is_alife = False
 
     def change_direction(self, direction):
+        '''Takes one parameter 'direction' which will be eventually the new
+           direction to move. If the 'direction' is not common with the current
+           the method just returns.
+
+        '''
         if self.curr_direction == RIGHT and direction == LEFT:
             return
         elif self.curr_direction == LEFT and direction == RIGHT:
@@ -43,41 +49,40 @@ class Snake(pygame.sprite.Sprite):
             self.new_direction = direction
 
     def move(self):
+        '''Method which moves the snake in the direction set in 'new_direction'
+           or sets the flag 'is_alive' to false through die() method.
+        '''
         if self.new_direction == RIGHT:
             self.curr_direction = RIGHT
             self.coord_x += 10
             if self.coord_x >= DISPLAY_SIZE[0]:
-                self.coord_x = DISPLAY_SIZE[0]
-                self.is_alife = False
+                self.die()
                 return
 
         elif self.new_direction == LEFT:
             self.curr_direction = LEFT
             self.coord_x -= 10
             if self.coord_x < 0:
-                self.coord_x = 0
-                self.is_alife = False
+                self.die()
                 return
 
         elif self.new_direction == DOWN:
             self.curr_direction = DOWN
             self.coord_y += 10
             if self.coord_y >= DISPLAY_SIZE[1]:
-                self.coord_y = DISPLAY_SIZE[1]
-                self.is_alife = False
+                self.die()
                 return
 
         elif self.new_direction == UP:
             self.curr_direction = UP
             self.coord_y -= 10
             if self.coord_y < 0:
-                self.coord_y = 0
-                self.is_alife = False
+                self.die()
                 return
 
-        for segment in self.snake_elements:
-            if segment[0] == self.rect.left and segment[1] == self.rect.top:
-                self.is_alife = False
+        for element in self.snake_elements:
+            if element[0] == self.rect.left and element[1] == self.rect.top:
+                self.die()
                 return
 
         self.snake_elements.insert(0, (self.rect.left, self.rect.top))
@@ -143,9 +148,8 @@ class Game(object):
         self.obstancles = []
         self.food = Food(GREEN, [])
         self.level = 0
-        self.levels_table = set([20, 40, 60, 320, 360, 400, 440])
-        self.level_up = pygame.mixer.Sound('sounds/level_up.wav')
-        self.game_over_sound = pygame.mixer.Sound('sounds/game_over.wav')
+        self.levels_table = set([11, 29, 47, 71, 97, 113])
+        self.eat_sound = pygame.mixer.Sound('sounds/eat.wav')
 
     def get_obstancles(self):
         return self.obstancles
@@ -159,7 +163,7 @@ class Game(object):
         image = pygame.image.load('images/game_over_mess.png')
         screen.blit(image, (0, 0))
         pygame.display.flip()
-        self.game_over_sound.play()
+        pygame.mixer.Sound('sounds/game_over.wav').play()
 
         #font = pygame.font.Font(None, 60)
         font = pygame.font.SysFont('Stencil', 60)
@@ -183,10 +187,10 @@ class Game(object):
         pygame.display.flip()
         pygame.time.wait(1000)
 
-    def increase_level(self, score):
-        if score in self.levels_table:
+    def increase_level(self, score, length):
+        if length in self.levels_table:
             self.speed -= 15
-            self.level_up.play()
+            pygame.mixer.Sound('sounds/level_up.wav').play()
 
     def get_start_option(self):
         while True:
@@ -248,10 +252,11 @@ class Game(object):
             if snake.rect.colliderect(self.food.rect):
                 player.increase_score()
                 self.obstancles.insert(0, Obstancle(RED, 0))
-                self.increase_level(player.get_score())
+                self.increase_level(player.get_score(), snake.get_length())
                 self.food.__init__(GREEN, self.obstancles)
                 start_time = pygame.time.get_ticks()
                 snake.grow()
+                self.eat_sound.play()
 
             for obstancle in self.get_obstancles():
                 if (snake.rect.colliderect(obstancle.rect)):
