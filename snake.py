@@ -1,3 +1,4 @@
+#!/usr/bin/env/ python
 import pygame
 from snakegamesysdata import *
 
@@ -22,9 +23,6 @@ class Snake(pygame.sprite.Sprite):
 
     def grow(self):
         self.length = self.length + 1
-
-    def get_length(self):
-        return self.length
 
     def die(self):
         self.is_alife = False

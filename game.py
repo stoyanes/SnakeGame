@@ -118,7 +118,7 @@ class Game(object):
             if snake.rect.colliderect(self.food.rect):
                 player.increase_score()
                 self.obstancles.insert(0, Obstancle(RED, 0))
-                self.increase_level(player.get_score(), snake.get_length())
+                self.increase_level(player.score, snake.length)
                 self.food.__init__(GREEN, self.obstancles)
                 start_time = pygame.time.get_ticks()
                 snake.grow()
@@ -131,7 +131,7 @@ class Game(object):
             screen.blit(background, (0, 0))
 
             if snake.is_alife == False:
-                self.draw_game_over_mess(screen, player.get_score())
+                self.draw_game_over_mess(screen, player.score)
                 return
             else:
                 sprites.update()
