@@ -7,17 +7,7 @@ from snake import *
 from piece import *
 from food import *
 from obstancle import *
-
-
-class Player(object):
-    def __init__(self):
-        self.score = 0
-
-    def get_score(self):
-        return self.score
-
-    def increase_score(self):
-        self.score += 5
+from player import *
 
 
 class Game(object):
@@ -29,9 +19,6 @@ class Game(object):
         self.level = 0
         self.levels_table = set([11, 29, 47, 71, 97, 113])
         self.eat_sound = pygame.mixer.Sound('sounds/eat.wav')
-
-    def get_obstancles(self):
-        return self.obstancles
 
     def draw_welcome_mess(self, screen):
         image = pygame.image.load('images/well_mess.png')
@@ -137,7 +124,7 @@ class Game(object):
                 snake.grow()
                 self.eat_sound.play()
 
-            for obstancle in self.get_obstancles():
+            for obstancle in self.obstancles:
                 if (snake.rect.colliderect(obstancle.rect)):
                     snake.die()
 
@@ -153,7 +140,7 @@ class Game(object):
                 for rect in snake.snake_elements:
                     screen.blit(snake.image, rect)
 
-                for obstancle in self.get_obstancles():
+                for obstancle in self.obstancles:
                     screen.blit(obstancle.image, obstancle)
 
                 pygame.display.flip()
