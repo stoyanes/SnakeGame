@@ -4,47 +4,9 @@ import random
 from pygame.locals import *
 from snakegamesysdata import *
 from snake import *
-
-
-
-
-
-class Piece(pygame.sprite.Sprite):
-    def __init__(self, color, coord_x, coord_y, rectan):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface(rectan)
-        self.rect = self.image.get_rect()
-        self.rect = pygame.draw.rect(self.image, color, self.rect)
-        self.rect.left = coord_x
-        self.rect.top = coord_y
-
-
-class Food(Piece):
-    def __init__(self, color, obstancles):
-        coord_x = random.randint(0, DISPLAY_SIZE[0] - SNAKE_REC[1])
-        coord_y = random.randint(0, DISPLAY_SIZE[1] - SNAKE_REC[1])
-
-        if len(obstancles) != 0:
-            flag = False
-            while True:
-                for obstancle in obstancles:
-                    if not obstancle.rect.collidepoint(coord_x, coord_y):
-                        flag = True
-                        break
-                if flag == True:
-                    break
-                else:
-                    coord_x = random.randint(0, DISPLAY_SIZE[0] - SNAKE_REC[1])
-                    coord_y = random.randint(0, DISPLAY_SIZE[1] - SNAKE_REC[1])
-
-        Piece.__init__(self, color, coord_x, coord_y, FOOD_REC)
-
-
-class Obstancle(Piece):
-    def __init__(self, color, obstan_position_ratio):
-        coord_x = random.randint(0, DISPLAY_SIZE[0])
-        coord_y = random.randint(0, DISPLAY_SIZE[1]) + obstan_position_ratio
-        Piece.__init__(self, color, coord_x, coord_y, OBSTAN_REC)
+from piece import *
+from food import *
+from obstancle import *
 
 
 class Player(object):
