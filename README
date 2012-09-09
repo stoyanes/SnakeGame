@@ -4,7 +4,7 @@ An old school snake game.
 
 INSTALLATION
 
-There is no installer. Simply run snake.py
+There is no installer. Simply run game.py
 Note: You will need the python and the pygame library.
 
 HOW TO PLAY
